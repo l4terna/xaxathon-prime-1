@@ -81,12 +81,12 @@ public class SportEventService {
 
         if (startDate != null) {
             spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("dateStart"), startDate));
+                    cb.greaterThanOrEqualTo(root.get("dateStart"), startDate));
         }
 
         if (endDate != null) {
             spec = spec.and((root, query, cb) ->
-                    cb.equal(root.get("dateEnd"), endDate));
+                    cb.lessThanOrEqualTo(root.get("dateEnd"), endDate));
         }
 
         if (description != null) {
