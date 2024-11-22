@@ -31,12 +31,10 @@ public class SportEventService {
 
 
         if (months != null) {
-            LocalDate oneMonthFromNow = LocalDate.now().plusMonths(1);
+            LocalDate currentDate = LocalDate.now();
+            LocalDate futureDate = currentDate.plusMonths(months);
             spec = spec.and((root, query, cb) ->
-                    cb.and(
-                            cb.lessThanOrEqualTo(root.get("dateEnd"), oneMonthFromNow),
-                            cb.greaterThanOrEqualTo(root.get("dateEnd"), LocalDate.now())
-                    ));
+                    cb.between(root.get("dateStart"), currentDate, futureDate));
         }
 
         if (category != null) {
@@ -63,14 +61,22 @@ public class SportEventService {
                     cb.like(cb.lower(root.get("location")), "%" + location.toLowerCase() + "%"));
         }
 
-        if (minParticipants != null) {
+        if (minParticipants != null && maxParticipants != null) {
             spec = spec.and((root, query, cb) ->
-                    cb.greaterThanOrEqualTo(root.get("participants"), minParticipants));
-        }
+                    cb.and(
+                            cb.greaterThanOrEqualTo(root.get("participants"), minParticipants),
+                            cb.lessThanOrEqualTo(root.get("participants"), maxParticipants)
+                    ));
+        } else {
+            if (minParticipants != null) {
+                spec = spec.and((root, query, cb) ->
+                        cb.greaterThanOrEqualTo(root.get("participants"), minParticipants));
+            }
 
-        if (maxParticipants != null) {
-            spec = spec.and((root, query, cb) ->
-                    cb.lessThanOrEqualTo(root.get("participants"), maxParticipants));
+            if (maxParticipants != null) {
+                spec = spec.and((root, query, cb) ->
+                        cb.lessThanOrEqualTo(root.get("participants"), maxParticipants));
+            }
         }
 
         if (startDate != null) {
