@@ -2,6 +2,7 @@ package com.laterna.xaxaxa.controller;
 
 import com.laterna.xaxaxa.entity.SportEvent;
 import com.laterna.xaxaxa.service.SportEventService;
+import com.laterna.xaxaxa.task.SportsPDFTask;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,10 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
@@ -22,6 +20,7 @@ import java.time.LocalDate;
 @RequestMapping("/api/sport-events")
 public class SportEventController {
     private final SportEventService sportEventService;
+    private final SportsPDFTask sportsPDFTask;
 
     @GetMapping
     public ResponseEntity<Page<SportEvent>> getAllEvents(
@@ -53,5 +52,11 @@ public class SportEventController {
 
         return ResponseEntity.ok(sportEventService.getAllEvents(months, category, location,
                 minParticipants, maxParticipants, startDate, endDate, description, country, gender, age, PageRequest.of(page, size)));
+    }
+
+    @PostMapping("/start")
+    public ResponseEntity startProcess() {
+        sportsPDFTask.runTask();
+        return (ResponseEntity) ResponseEntity.ok();
     }
 }
