@@ -57,6 +57,6 @@ public class SportEventController {
     @PostMapping("/start")
     public ResponseEntity startProcess() {
         sportsPDFTask.runTask();
-        return (ResponseEntity) ResponseEntity.ok();
+        return ResponseEntity.ok().build();
     }
 }
