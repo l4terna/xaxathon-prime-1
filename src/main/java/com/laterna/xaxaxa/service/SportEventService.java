@@ -29,11 +29,14 @@ public class SportEventService {
 
         Specification<SportEvent> spec = Specification.where(null);
 
+
         if (months != null) {
+            LocalDate oneMonthFromNow = LocalDate.now().plusMonths(1);
             spec = spec.and((root, query, cb) ->
-                    cb.between(root.get("dateStart"),
-                            LocalDate.now().minusMonths(months),
-                            LocalDate.now()));
+                    cb.and(
+                            cb.lessThanOrEqualTo(root.get("dateEnd"), oneMonthFromNow),
+                            cb.greaterThanOrEqualTo(root.get("dateEnd"), LocalDate.now())
+                    ));
         }
 
         if (category != null) {
