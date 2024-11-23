@@ -3,6 +3,8 @@ package com.laterna.xaxaxa.controller;
 import com.laterna.xaxaxa.dto.AuthResponseDto;
 import com.laterna.xaxaxa.dto.LoginRequestDto;
 import com.laterna.xaxaxa.dto.RegisterRequestDto;
+import com.laterna.xaxaxa.dto.UserDto;
+import com.laterna.xaxaxa.mapper.UserMapper;
 import com.laterna.xaxaxa.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -15,6 +17,12 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final UserService userService;
+    private final UserMapper userMapper;
+
+    @GetMapping("/user")
+    public ResponseEntity<UserDto> getUser() {
+        return ResponseEntity.ok(userMapper.toDto(userService.getCurrentUser()));
+    }
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponseDto> register(

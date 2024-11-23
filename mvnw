@@ -4,7 +4,7 @@
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
 # regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2_create_sport_events.sql.0 (the
+# to you under the Apache License, Version 02_create_sport_events.sql.0 (the
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
 #
@@ -19,7 +19,7 @@
 # ----------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------
-# Apache Maven Wrapper startup batch script, version 3.3.2_create_sport_events.sql
+# Apache Maven Wrapper startup batch script, version 3.3.02_create_sport_events.sql
 #
 # Optional ENV vars
 # -----------------
