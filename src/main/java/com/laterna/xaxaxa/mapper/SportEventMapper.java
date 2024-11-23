@@ -40,29 +40,19 @@ public class SportEventMapper {
         return entity;
     }
 
-    public SportEventDto toDto(SportEvent entity) {
-        if (entity == null) {
+    public SportEventDto toDto(SportEvent sportEvent) {
+        if (sportEvent == null) {
             return null;
         }
 
-        SportEventDto dto = SportEventDto.builder()
-                .id(entity.getEventId())
-                .name(entity.getName())
-                .location(entity.getLocation())
-                .participants(entity.getParticipants())
-                .description(entity.getDescription())
+        return SportEventDto.builder()
+                .id(String.valueOf(sportEvent.getId()))
+                .name(sportEvent.getName())
+                .location(sportEvent.getLocation())
+                .dateStart(String.valueOf(sportEvent.getDateStart()))
+                .dateEnd(String.valueOf(sportEvent.getDateEnd()))
+                .participants(sportEvent.getParticipants())
                 .build();
-
-        // Преобразование дат
-        if (entity.getDateStart() != null) {
-            dto.setDateStart(entity.getDateStart().format(DATE_FORMATTER));
-        }
-
-        if (entity.getDateEnd() != null) {
-            dto.setDateEnd(entity.getDateEnd().format(DATE_FORMATTER));
-        }
-
-        return dto;
     }
 
     public List<SportEvent> toEntityList(List<SportEventDto> dtoList, SportCategory category) {

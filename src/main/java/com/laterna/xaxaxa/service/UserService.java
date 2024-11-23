@@ -5,6 +5,7 @@ import com.laterna.xaxaxa.dto.LoginRequestDto;
 import com.laterna.xaxaxa.dto.RegisterRequestDto;
 import com.laterna.xaxaxa.dto.TokenBlacklist;
 import com.laterna.xaxaxa.entity.User;
+import com.laterna.xaxaxa.exception.ResourceNotFoundException;
 import com.laterna.xaxaxa.repository.TokenRepository;
 import com.laterna.xaxaxa.repository.UserRepository;
 import com.laterna.xaxaxa.util.SecurityUtil;
@@ -19,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,12 @@ public class UserService {
     private final JwtService jwtService;
     private final TokenRepository tokenRepository;
     private final SecurityUtil securityUtil;
+
+
+    public Optional<User> getUserById(Long userId) {
+        return Optional.ofNullable(userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId)));
+    }
 
     @Transactional
     public void logout(String token) {
