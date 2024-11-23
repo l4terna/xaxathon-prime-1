@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/sport-categories")
 @RequiredArgsConstructor
-public class SportCategoryController {
+public class    SportCategoryController {
     private final SportCategoryService sportCategoryService;
 
     @GetMapping
