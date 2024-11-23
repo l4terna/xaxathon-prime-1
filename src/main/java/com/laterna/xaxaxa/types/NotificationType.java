@@ -1,4 +1,8 @@
 package com.laterna.xaxaxa.types;
 
-public class NotificationType {
+public enum NotificationType {
+    EMAIL,
+    SMS,
+    PUSH,
+    TELEGRAM
 }

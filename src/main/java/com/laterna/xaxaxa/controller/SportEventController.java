@@ -55,8 +55,15 @@ public class SportEventController {
     }
 
     @PostMapping("/start")
-    public ResponseEntity startProcess() {
+    public ResponseEntity<Void> startProcess() {
         sportsPDFTask.runTask();
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SportEvent> getSportEventById(
+            @PathVariable Long id) {
+        SportEvent sportEvent = sportEventService.getEvent(id);
+        return ResponseEntity.ok(sportEvent);
     }
 }

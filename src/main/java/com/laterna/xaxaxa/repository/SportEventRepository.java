@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface SportEventRepository extends JpaRepository<SportEvent, Long>, JpaSpecificationExecutor<SportEvent> {
-    Optional<SportEvent> findByEventId(String eventId);
+    Optional<SportEvent> findById(Long id);
+    Optional<SportEvent> findByEventId(String id);
     Page<SportEvent> findByDateStartBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
 }

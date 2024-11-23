@@ -35,34 +35,29 @@ public class SportsDataService {
 
     public void saveData() {
         try {
-            String url = "https://storage.minsport.gov.ru/cms-uploads/cms/II_chast_EKP_2024_14_11_24_65c6deea36.pdf"; // надо будет поменять, пока что хардкодом
+            String url = "https://storage.minsport.gov.ru/cms-uploads/cms/II_chast_EKP_2024_14_11_24_65c6deea36.pdf";
 
             Map<SportCategoryDto, List<SportEventDto>> categoryEventsMap = sportsPDFParser.parse(url);
 
             for (Map.Entry<SportCategoryDto, List<SportEventDto>> entry : categoryEventsMap.entrySet()) {
                 SportCategoryDto categoryDto = entry.getKey();
                 List<SportEventDto> eventDtos = entry.getValue();
-                System.out.println(categoryDto.getName());
+                log.info("Processing category: {}", categoryDto.getName());
 
                 Optional<SportCategory> categoryOpt = categoryRepository.findByName(categoryDto.getName());
-                SportCategory category;
-
-                if (categoryOpt.isPresent()) {
-                    category = categoryOpt.get();
-                } else {
-                    category = sportCategoryMapper.toEntity(categoryDto);
-                    System.out.println(category);
-                    category = categoryRepository.save(category);
-                }
+                SportCategory category = categoryOpt.orElseGet(() -> {
+                    SportCategory newCategory = sportCategoryMapper.toEntity(categoryDto);
+                    log.info("Saving new category: {}", newCategory);
+                    return categoryRepository.save(newCategory);
+                });
 
                 List<SportEvent> events = sportEventMapper.toEntityList(eventDtos, category);
-
                 List<SportEvent> eventsToSave = new ArrayList<>();
 
                 for (SportEvent event : events) {
                     event.setCategory(category);
 
-                    Optional<SportEvent> existingEventOpt = sportEventRepository.findByEventId(event.getEventId());
+                    Optional<SportEvent> existingEventOpt = sportEventRepository.findByEventId((event.getEventId()));
 
                     boolean hasEventWithSameId = eventsToSave.stream()
                             .anyMatch(e -> e.getEventId().equals(event.getEventId()));
@@ -72,10 +67,13 @@ public class SportsDataService {
                     }
                 }
 
-                sportEventRepository.saveAll(eventsToSave);
+                if (!eventsToSave.isEmpty()) {
+                    log.info("Saving {} new events for category {}", eventsToSave.size(), category.getName());
+                    sportEventRepository.saveAll(eventsToSave);
+                }
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error while saving sports data", e);
         }
     }
 }

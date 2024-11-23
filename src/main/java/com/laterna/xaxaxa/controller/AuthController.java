@@ -3,20 +3,12 @@ package com.laterna.xaxaxa.controller;
 import com.laterna.xaxaxa.dto.AuthResponseDto;
 import com.laterna.xaxaxa.dto.LoginRequestDto;
 import com.laterna.xaxaxa.dto.RegisterRequestDto;
-import com.laterna.xaxaxa.entity.User;
-import com.laterna.xaxaxa.repository.UserRepository;
-import com.laterna.xaxaxa.service.JwtService;
 import com.laterna.xaxaxa.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -37,4 +29,13 @@ public class AuthController {
             @Valid @RequestBody LoginRequestDto request) {
         return ResponseEntity.ok(userService.login(request));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @RequestHeader("Authorization") String token
+    ) {
+        userService.logout(token);
+        return ResponseEntity.ok().build();
+    }
+
 }

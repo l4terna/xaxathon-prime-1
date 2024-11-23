@@ -1,5 +1,6 @@
 package com.laterna.xaxaxa.filter;
 
+import com.laterna.xaxaxa.entity.User;
 import com.laterna.xaxaxa.service.CustomUserDetailsService;
 import com.laterna.xaxaxa.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -35,11 +36,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         final String jwt = authHeader.substring(7);
-        final String username = jwtService.extractUsername(jwt);
+        final String username = String.valueOf(jwtService.extractUserId(jwt));
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
+            if (jwtService.isTokenValid(jwt, (User) userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,

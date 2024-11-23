@@ -3,15 +3,22 @@ package com.laterna.xaxaxa.service;
 import com.laterna.xaxaxa.dto.AuthResponseDto;
 import com.laterna.xaxaxa.dto.LoginRequestDto;
 import com.laterna.xaxaxa.dto.RegisterRequestDto;
+import com.laterna.xaxaxa.dto.TokenBlacklist;
 import com.laterna.xaxaxa.entity.User;
+import com.laterna.xaxaxa.repository.TokenRepository;
 import com.laterna.xaxaxa.repository.UserRepository;
+import com.laterna.xaxaxa.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +26,40 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final TokenRepository tokenRepository;
+    private final SecurityUtil securityUtil;
+
+    @Transactional
+    public void logout(String token) {
+        try {
+            String cleanToken = token;
+            if (token.startsWith("Bearer ")) {
+                cleanToken = token.substring(7);
+            }
+
+            // Находим токен в базе
+            var tokenEntity = tokenRepository.findByToken(cleanToken)
+                    .orElseThrow(() -> new IllegalStateException("Token not found"));
+
+            // Помечаем токен как отозванный и истекший
+            tokenEntity.setRevoked(true);
+            tokenEntity.setExpired(true);
+
+            tokenRepository.save(tokenEntity);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to process logout", e);
+        }
+    }
+
+    public List<Long> getAllUserIds() {
+        return userRepository.findAllUserIds();
+    }
+
+
+    @Transactional(readOnly = true)
+    public User getCurrentUser() {
+        return securityUtil.getCurrentUser();
+    }
 
     public AuthResponseDto register(RegisterRequestDto request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -34,13 +75,7 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        String token = jwtService.generateToken(
-                new org.springframework.security.core.userdetails.User(
-                        savedUser.getEmail(),
-                        savedUser.getPassword(),
-                        Collections.emptyList()
-                )
-        );
+        String token = jwtService.generateToken(savedUser);
 
         return AuthResponseDto.builder()
                 .token(token)
@@ -61,11 +96,7 @@ public class UserService {
         }
 
         String token = jwtService.generateToken(
-                new org.springframework.security.core.userdetails.User(
-                        user.getEmail(),
-                        user.getPassword(),
-                        Collections.emptyList()
-                )
+                user
         );
 
         return AuthResponseDto.builder()

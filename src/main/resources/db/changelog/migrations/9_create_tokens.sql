@@ -1,0 +1,11 @@
+-- changeset laterna:11
+CREATE TABLE tokens (
+    id BIGSERIAL PRIMARY KEY,
+    token VARCHAR(500) NOT NULL UNIQUE,
+    user_id BIGINT NOT NULL REFERENCES users(id),
+    token_type VARCHAR(50),
+    revoked BOOLEAN DEFAULT FALSE,
+    expired BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL
+);

@@ -2,6 +2,7 @@ package com.laterna.xaxaxa.service;
 
 import com.laterna.xaxaxa.entity.SportEvent;
 import com.laterna.xaxaxa.repository.SportEventRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,11 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor
 public class SportEventService {
     private final SportEventRepository sportEventRepository;
+
+    public SportEvent getEvent(Long id) {
+        return sportEventRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Sport event not found with id: " + id));
+    }
 
     public Page<SportEvent> getAllEvents(Integer months, String category, String location,
                                          Integer minParticipants, Integer maxParticipants,
