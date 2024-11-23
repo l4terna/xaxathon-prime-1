@@ -24,6 +24,7 @@ public class SportCategoryMapper {
         }
 
         return SportCategoryDto.builder()
+                .id(entity.getId())
                 .name(entity.getName())
                 .build();
     }

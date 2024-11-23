@@ -9,5 +9,6 @@ import lombok.Setter;
 @Setter
 @Builder
 public class SportCategoryDto {
+    private Long id;
     private String name;
 }

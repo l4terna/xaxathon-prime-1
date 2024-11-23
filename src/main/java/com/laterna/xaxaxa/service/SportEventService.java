@@ -5,7 +5,9 @@ import com.laterna.xaxaxa.repository.SportEventRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -121,6 +123,12 @@ public class SportEventService {
             }
         }
 
-        return sportEventRepository.findAll(spec, pageable);
+        Pageable pageableWithSort = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.ASC, "dateStart")
+        );
+
+        return sportEventRepository.findAll(spec, pageableWithSort);
     }
 }
