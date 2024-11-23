@@ -32,7 +32,7 @@ public class SportEventService {
                                          Integer minParticipants, Integer maxParticipants,
                                          LocalDate startDate, LocalDate endDate,
                                          String description, String country, String gender,
-                                         String age,
+                                         String age, String name,
                                          Pageable pageable) {
 
         Specification<SportEvent> spec = Specification.where(null);
@@ -67,6 +67,11 @@ public class SportEventService {
         if (location != null) {
             spec = spec.and((root, query, cb) ->
                     cb.like(cb.lower(root.get("location")), "%" + location.toLowerCase() + "%"));
+        }
+
+        if (name != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
         }
 
         if (minParticipants != null && maxParticipants != null) {

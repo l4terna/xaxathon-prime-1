@@ -47,11 +47,13 @@ public class SportEventController {
             @RequestParam(required = false) String description,
             @Parameter(description = "Page number")
             @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Search by name")
+            @RequestParam(required = false) String name,
             @Parameter(description = "Page size")
             @RequestParam(defaultValue = "30") int size) {
 
         return ResponseEntity.ok(sportEventService.getAllEvents(months, category, location,
-                minParticipants, maxParticipants, startDate, endDate, description, country, gender, age, PageRequest.of(page, size)));
+                minParticipants, maxParticipants, startDate, endDate, description, country, gender, age, name, PageRequest.of(page, size)));
     }
 
     @PostMapping("/start")
